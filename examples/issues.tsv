@@ -1,0 +1,6 @@
+ID	TITLE	LABELS	UPDATED
+#322	Update `parseFnCall` to support page methods		about 24 days ago
+#316	Ability to further extend expect-expect to match any function/method name		about 1 hour ago
+#294	Add a rule for validating that actions are `await`ed	enhancement	about 5 months ago
+#199	Ensure that `waitForResponse` and similar methods are awaited after triggering condition	new rule	about 8 months ago
+#159	Feature request: check page and locator actions for `missing-playwright-await` rule	enhancement	about 9 months ago

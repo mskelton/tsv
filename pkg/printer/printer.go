@@ -6,26 +6,26 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/mattn/go-runewidth"
-	"github.com/mskelton/tsv/pkg/config"
+	"github.com/mskelton/tsv/pkg/arg_parser"
 )
 
-func getColor(c config.CellColor) *color.Color {
+func getColor(c arg_parser.CellColor) *color.Color {
 	switch c {
-	case config.CellColorRed:
+	case arg_parser.CellColorRed:
 		return color.New(color.FgRed)
-	case config.CellColorGreen:
+	case arg_parser.CellColorGreen:
 		return color.New(color.FgGreen)
-	case config.CellColorYellow:
+	case arg_parser.CellColorYellow:
 		return color.New(color.FgYellow)
-	case config.CellColorBlue:
+	case arg_parser.CellColorBlue:
 		return color.New(color.FgBlue)
-	case config.CellColorMagenta:
+	case arg_parser.CellColorMagenta:
 		return color.New(color.FgMagenta)
-	case config.CellColorCyan:
+	case arg_parser.CellColorCyan:
 		return color.New(color.FgCyan)
-	case config.CellColorGray:
+	case arg_parser.CellColorGray:
 		return color.RGB(99, 101, 123)
-	case config.CellColorDim:
+	case arg_parser.CellColorDim:
 		return color.New(color.FgWhite)
 	}
 
@@ -35,8 +35,8 @@ func getColor(c config.CellColor) *color.Color {
 const separator = "  "
 
 type Table struct {
-	Config config.TableConfig
-	Rows   [][]string
+	Config arg_parser.TableConfig
+	Rows   []map[string]string
 }
 
 // Special implementation of string padding to account for unicode string width
@@ -46,29 +46,29 @@ func pad(str string, w int) string {
 
 func (table *Table) Print() {
 	widths := make([]int, len(table.Config.Columns))
-	headerColor := getColor(config.CellColorGray).Add(color.Underline).SprintFunc()
+	headerColor := getColor(arg_parser.CellColorGray).Add(color.Underline).SprintFunc()
 
 	// Find the maximum width of each column
 	for _, row := range table.Rows {
-		for i := range table.Config.Columns {
-			length := runewidth.StringWidth(row[i])
+		for i, column := range table.Config.Columns {
+			length := runewidth.StringWidth(row[column.Key])
 			widths[i] = max(widths[i], length)
 		}
 	}
 
 	// Calculate the width of each column header, ignoring empty columns
-	for i, col := range table.Config.Columns {
+	for i, column := range table.Config.Columns {
 		if widths[i] > 0 {
 			// Column headers never have Unicode, so `len()` is safe to use
-			widths[i] = max(widths[i], len(col.Name))
+			widths[i] = max(widths[i], len(column.Name))
 		}
 	}
 
 	// Create the header row, skipping empty columns
 	var header []string
-	for i, col := range table.Config.Columns {
+	for i, column := range table.Config.Columns {
 		if widths[i] > 0 {
-			header = append(header, headerColor(pad(col.Name, widths[i])))
+			header = append(header, headerColor(pad(column.Name, widths[i])))
 		}
 	}
 
@@ -93,7 +93,7 @@ func (table *Table) Print() {
 		for i, column := range table.Config.Columns {
 			if widths[i] > 0 {
 				color := getColor(column.Color).SprintFunc()
-				cells = append(cells, color(pad(row[i], widths[i])))
+				cells = append(cells, color(pad(row[column.Key], widths[i])))
 			}
 		}
 

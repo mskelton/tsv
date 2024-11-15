@@ -1,0 +1,37 @@
+[
+  {
+    "labels": null,
+    "number": "#322",
+    "title": "Update `parseFnCall` to support page methods",
+    "updatedAt": "2024-10-19T22:42:17Z",
+    "url": "https://github.com/playwright-community/eslint-plugin-playwright/issues/322"
+  },
+  {
+    "labels": null,
+    "number": "#316",
+    "title": "Ability to further extend expect-expect to match any function/method name",
+    "updatedAt": "2024-11-13T20:36:14Z",
+    "url": "https://github.com/playwright-community/eslint-plugin-playwright/issues/316"
+  },
+  {
+    "labels": "enhancement",
+    "number": "#294",
+    "title": "Add a rule for validating that actions are `await`ed",
+    "updatedAt": "2024-06-09T13:32:15Z",
+    "url": "https://github.com/playwright-community/eslint-plugin-playwright/issues/294"
+  },
+  {
+    "labels": "new rule",
+    "number": "#199",
+    "title": "Ensure that `waitForResponse` and similar methods are awaited after triggering condition",
+    "updatedAt": "2024-02-19T08:27:15Z",
+    "url": "https://github.com/playwright-community/eslint-plugin-playwright/issues/199"
+  },
+  {
+    "labels": "enhancement",
+    "number": "#159",
+    "title": "Feature request: check page and locator actions for `missing-playwright-await` rule",
+    "updatedAt": "2024-02-17T18:10:39Z",
+    "url": "https://github.com/playwright-community/eslint-plugin-playwright/issues/159"
+  }
+]

@@ -45,11 +45,12 @@ const (
 )
 
 type ColumnConfig struct {
-	Key    string
-	Name   string
-	Type   ColumnType
-	Format ColumnFormat
-	Color  CellColor
+	Key      string
+	Name     string
+	Type     ColumnType
+	Format   ColumnFormat
+	Color    CellColor
+	Truncate int
 }
 
 type TableConfig struct {
@@ -128,11 +129,12 @@ func parseFlags(flags []flag) Args {
 		switch flag.Name {
 		case "column":
 			column := &ColumnConfig{
-				Key:    strconv.Itoa(len(args.TableConfig.Columns)),
-				Name:   flag.Args[0],
-				Type:   ColumnTypeText,
-				Color:  CellColorDefault,
-				Format: ColumnFormatDefault,
+				Key:      strconv.Itoa(len(args.TableConfig.Columns)),
+				Name:     flag.Args[0],
+				Type:     ColumnTypeText,
+				Color:    CellColorDefault,
+				Format:   ColumnFormatDefault,
+				Truncate: 0,
 			}
 
 			// Parse key=value pairs
@@ -149,6 +151,13 @@ func parseFlags(flags []flag) Args {
 					column.Type = ColumnType(value)
 				case "format":
 					column.Format = ColumnFormat(value)
+				case "trunc":
+					trunc, err := strconv.Atoi(value)
+					if err != nil {
+						log.Fatalf("invalid trunc value: %s", value)
+					}
+
+					column.Truncate = trunc
 				}
 			}
 

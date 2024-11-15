@@ -39,9 +39,16 @@ type Table struct {
 	Rows   []map[string]string
 }
 
-// Special implementation of string padding to account for unicode string width
-func pad(str string, w int) string {
-	return str + strings.Repeat(" ", w-runewidth.StringWidth(str))
+// Special implementation of string padding/truncate to account for unicode
+// string width
+func autosize(str string, w int) string {
+	sw := runewidth.StringWidth(str)
+
+	if sw > w {
+		return runewidth.Truncate(str, w, "…")
+	}
+
+	return runewidth.FillRight(str, w)
 }
 
 func (table *Table) Print() {
@@ -64,11 +71,18 @@ func (table *Table) Print() {
 		}
 	}
 
+	// Truncate columns if necessary
+	for i, column := range table.Config.Columns {
+		if column.Truncate > 0 {
+			widths[i] = min(widths[i], column.Truncate)
+		}
+	}
+
 	// Create the header row, skipping empty columns
 	var header []string
 	for i, column := range table.Config.Columns {
 		if widths[i] > 0 {
-			header = append(header, headerColor(pad(column.Name, widths[i])))
+			header = append(header, headerColor(autosize(column.Name, widths[i])))
 		}
 	}
 
@@ -93,7 +107,7 @@ func (table *Table) Print() {
 		for i, column := range table.Config.Columns {
 			if widths[i] > 0 {
 				color := getColor(column.Color).SprintFunc()
-				cells = append(cells, color(pad(row[column.Key], widths[i])))
+				cells = append(cells, color(autosize(row[column.Key], widths[i])))
 			}
 		}
 

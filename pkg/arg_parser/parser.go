@@ -31,17 +31,19 @@ const (
 type ColumnFormat string
 
 const (
-	ColumnFormatDefault    ColumnFormat = ""
+	ColumnFormatDefault ColumnFormat = ""
+
 	ColumnFormatDecimal    ColumnFormat = "decimal"
 	ColumnFormatPercent    ColumnFormat = "percent"
 	ColumnFormatScientific ColumnFormat = "scientific"
 	ColumnFormatAccounting ColumnFormat = "accounting"
 	ColumnFormatFinancial  ColumnFormat = "financial"
 	ColumnFormatCurrency   ColumnFormat = "currency"
-	ColumnFormatDate       ColumnFormat = "date"
-	ColumnFormatTime       ColumnFormat = "time"
-	ColumnFormatDateTime   ColumnFormat = "datetime"
-	ColumnFormatRelative   ColumnFormat = "relative"
+
+	ColumnFormatDate     ColumnFormat = "date"
+	ColumnFormatTime     ColumnFormat = "time"
+	ColumnFormatDateTime ColumnFormat = "datetime"
+	ColumnFormatRelative ColumnFormat = "relative"
 )
 
 type ColumnConfig struct {

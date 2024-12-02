@@ -19,10 +19,7 @@ func main() {
 		rows = parser.ParseJson(os.Stdin)
 	}
 
-	table := printer.Table{
-		Config: args.TableConfig,
-		Rows:   rows,
-	}
-
+	table := printer.Table{Config: args.TableConfig}
+	table.Load(rows)
 	table.Print()
 }

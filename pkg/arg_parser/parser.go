@@ -145,6 +145,9 @@ func parseFlags(flags []flag) Args {
 				switch key {
 				case "key":
 					column.Key = value
+
+					// If any column contains a key, set the format to JSON automatically
+					args.InputFormat = InputFormatJson
 				case "color":
 					column.Color = CellColor(value)
 				case "type":

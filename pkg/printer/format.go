@@ -1,11 +1,14 @@
 package printer
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 
 	"github.com/mergestat/timediff"
 	"github.com/mskelton/tsv/pkg/arg_parser"
+	"golang.org/x/text/language"
+	"golang.org/x/text/message"
 )
 
 func format(value string, column arg_parser.ColumnConfig) (string, error) {
@@ -31,20 +34,52 @@ func formatNumber(value string, format arg_parser.ColumnFormat) (string, error) 
 
 	switch format {
 	case arg_parser.ColumnFormatDecimal:
-		return strconv.FormatFloat(num, 'f', 2, 64), nil
+		return formatDecimal(num), nil
 	case arg_parser.ColumnFormatPercent:
-		return strconv.FormatFloat(num*100, 'f', 2, 64) + "%", nil
+		return formatPercent(num), nil
 	case arg_parser.ColumnFormatScientific:
-		return strconv.FormatFloat(num, 'e', 2, 64), nil
+		return formatScientific(num), nil
 	case arg_parser.ColumnFormatAccounting:
-		return "$" + strconv.FormatFloat(num, 'f', 2, 64), nil
+		return formatAccounting(num), nil
 	case arg_parser.ColumnFormatFinancial:
-		return strconv.FormatFloat(num, 'f', 2, 64), nil
+		return formatFinancial(num), nil
 	case arg_parser.ColumnFormatCurrency:
-		return "$" + strconv.FormatFloat(num, 'f', 2, 64), nil
+		return formatCurrency(num), nil
 	}
 
 	return value, nil
+}
+
+func formatDecimal(num float64) string {
+	return message.NewPrinter(language.English).Sprintf("%.2f", num)
+}
+
+func formatPercent(num float64) string {
+	return formatDecimal(num*100) + "%"
+}
+
+func formatScientific(num float64) string {
+	return message.NewPrinter(language.English).Sprintf("%.2e", num)
+}
+
+func formatAccounting(num float64) string {
+	return "$" + formatFinancial(num)
+}
+
+func formatFinancial(num float64) string {
+	if num < 0 {
+		return fmt.Sprintf("(%s)", formatDecimal(-num))
+	}
+
+	return formatDecimal(num)
+}
+
+func formatCurrency(num float64) string {
+	if num < 0 {
+		return "-$" + formatDecimal(-num)
+	}
+
+	return "$" + formatDecimal(num)
 }
 
 func formatDate(value string, format arg_parser.ColumnFormat) (string, error) {

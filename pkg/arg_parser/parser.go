@@ -86,7 +86,7 @@ func parseArgs(args []string) []flag {
 	var currentFlag *flag
 
 	for _, arg := range args {
-		if strings.HasPrefix(arg, "--") {
+		if strings.HasPrefix(arg, "-") {
 			// Add the current flag to the list
 			if currentFlag != nil {
 				flags = append(flags, *currentFlag)
@@ -94,7 +94,7 @@ func parseArgs(args []string) []flag {
 
 			// Create a new flag
 			currentFlag = &flag{
-				Name: strings.TrimPrefix(arg, "--"),
+				Name: strings.TrimLeft(arg, "-"),
 				Args: []string{},
 			}
 		} else {
@@ -129,7 +129,7 @@ func parseFlags(flags []flag) Args {
 
 	for _, flag := range flags {
 		switch flag.Name {
-		case "column":
+		case "c", "column":
 			column := &ColumnConfig{
 				Key:      strconv.Itoa(len(args.TableConfig.Columns)),
 				Name:     flag.Args[0],

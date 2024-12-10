@@ -10,23 +10,23 @@ import (
 	"github.com/mskelton/tsv/pkg/arg_parser"
 )
 
-func getColor(c arg_parser.CellColor) *color.Color {
+func getColor(c arg_parser.ColumnColor) *color.Color {
 	switch c {
-	case arg_parser.CellColorRed:
+	case arg_parser.ColumnColorRed:
 		return color.New(color.FgRed)
-	case arg_parser.CellColorGreen:
+	case arg_parser.ColumnColorGreen:
 		return color.New(color.FgGreen)
-	case arg_parser.CellColorYellow:
+	case arg_parser.ColumnColorYellow:
 		return color.New(color.FgYellow)
-	case arg_parser.CellColorBlue:
+	case arg_parser.ColumnColorBlue:
 		return color.New(color.FgBlue)
-	case arg_parser.CellColorMagenta:
+	case arg_parser.ColumnColorMagenta:
 		return color.New(color.FgMagenta)
-	case arg_parser.CellColorCyan:
+	case arg_parser.ColumnColorCyan:
 		return color.New(color.FgCyan)
-	case arg_parser.CellColorGray:
+	case arg_parser.ColumnColorGray:
 		return color.RGB(99, 101, 123)
-	case arg_parser.CellColorDim:
+	case arg_parser.ColumnColorDim:
 		return color.New(color.FgWhite)
 	}
 
@@ -42,14 +42,22 @@ type Table struct {
 
 // Special implementation of string padding/truncate to account for unicode
 // string width
-func autosize(str string, w int) string {
+func autosize(str string, w int, align arg_parser.ColumnAlign) string {
 	sw := runewidth.StringWidth(str)
 
 	if sw > w {
-		return runewidth.Truncate(str, w, "…")
+		if align == arg_parser.ColumnAlignRight {
+			return runewidth.TruncateLeft(str, sw-w+1, "…")
+		} else {
+			return runewidth.Truncate(str, w, "…")
+		}
 	}
 
-	return runewidth.FillRight(str, w)
+	if align == arg_parser.ColumnAlignRight {
+		return runewidth.FillLeft(str, w)
+	} else {
+		return runewidth.FillRight(str, w)
+	}
 }
 
 func (table *Table) Load(rows []map[string]string) {
@@ -71,7 +79,7 @@ func (table *Table) Load(rows []map[string]string) {
 
 func (table *Table) Print() {
 	widths := make([]int, len(table.Config.Columns))
-	headerColor := getColor(arg_parser.CellColorGray).Add(color.Underline).SprintFunc()
+	headerColor := getColor(arg_parser.ColumnColorGray).Add(color.Underline).SprintFunc()
 
 	// Find the maximum width of each column
 	for _, row := range table.rows {
@@ -100,7 +108,7 @@ func (table *Table) Print() {
 	var header []string
 	for i, column := range table.Config.Columns {
 		if widths[i] > 0 {
-			header = append(header, headerColor(autosize(column.Name, widths[i])))
+			header = append(header, headerColor(autosize(column.Name, widths[i], column.Align)))
 		}
 	}
 
@@ -125,7 +133,7 @@ func (table *Table) Print() {
 		for i, column := range table.Config.Columns {
 			if widths[i] > 0 {
 				color := getColor(column.Color).SprintFunc()
-				cells = append(cells, color(autosize(row[column.Key], widths[i])))
+				cells = append(cells, color(autosize(row[column.Key], widths[i], column.Align)))
 			}
 		}
 

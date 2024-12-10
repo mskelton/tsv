@@ -6,18 +6,18 @@ import (
 	"strings"
 )
 
-type CellColor string
+type ColumnColor string
 
 const (
-	CellColorDefault CellColor = ""
-	CellColorRed     CellColor = "red"
-	CellColorGreen   CellColor = "green"
-	CellColorYellow  CellColor = "yellow"
-	CellColorBlue    CellColor = "blue"
-	CellColorMagenta CellColor = "magenta"
-	CellColorCyan    CellColor = "cyan"
-	CellColorGray    CellColor = "gray"
-	CellColorDim     CellColor = "dim"
+	ColumnColorDefault ColumnColor = ""
+	ColumnColorRed     ColumnColor = "red"
+	ColumnColorGreen   ColumnColor = "green"
+	ColumnColorYellow  ColumnColor = "yellow"
+	ColumnColorBlue    ColumnColor = "blue"
+	ColumnColorMagenta ColumnColor = "magenta"
+	ColumnColorCyan    ColumnColor = "cyan"
+	ColumnColorGray    ColumnColor = "gray"
+	ColumnColorDim     ColumnColor = "dim"
 )
 
 type ColumnType string
@@ -46,12 +46,20 @@ const (
 	ColumnFormatRelative ColumnFormat = "relative"
 )
 
+type ColumnAlign string
+
+const (
+	ColumnAlignLeft  ColumnAlign = "left"
+	ColumnAlignRight ColumnAlign = "right"
+)
+
 type ColumnConfig struct {
 	Key      string
 	Name     string
+	Align    ColumnAlign
 	Type     ColumnType
 	Format   ColumnFormat
-	Color    CellColor
+	Color    ColumnColor
 	Truncate int
 }
 
@@ -134,7 +142,7 @@ func parseFlags(flags []flag) Args {
 				Key:      strconv.Itoa(len(args.TableConfig.Columns)),
 				Name:     flag.Args[0],
 				Type:     ColumnTypeText,
-				Color:    CellColorDefault,
+				Color:    ColumnColorDefault,
 				Format:   ColumnFormatDefault,
 				Truncate: 0,
 			}
@@ -151,11 +159,13 @@ func parseFlags(flags []flag) Args {
 					// If any column contains a key, set the format to JSON automatically
 					args.InputFormat = InputFormatJson
 				case "color":
-					column.Color = CellColor(value)
+					column.Color = ColumnColor(value)
 				case "type":
 					column.Type = ColumnType(value)
 				case "format":
 					column.Format = ColumnFormat(value)
+				case "align":
+					column.Align = ColumnAlign(value)
 				case "trunc":
 					trunc, err := strconv.Atoi(value)
 					if err != nil {
